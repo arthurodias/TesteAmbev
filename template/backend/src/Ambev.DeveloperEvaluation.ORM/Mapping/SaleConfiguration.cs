@@ -4,9 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Ambev.DeveloperEvaluation.ORM.Mapping;
 
-/// <summary>
-/// Configures the Sale entity mapping for the database schema.
-/// </summary>
 public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 {
     public void Configure(EntityTypeBuilder<Sale> builder)
@@ -18,9 +15,9 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 
         builder.Property(s => s.SaleNumber)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasMaxLength(100);
 
-        builder.Property(s => s.Date)
+        builder.Property(s => s.SaleDate)
             .IsRequired();
 
         builder.Property(s => s.Customer)
@@ -31,16 +28,13 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.Property(s => s.TotalAmount)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
-
         builder.Property(s => s.IsCancelled)
             .IsRequired();
 
+        builder.Ignore(s => s.TotalAmount); // Calculado em tempo de execução
+
         builder.HasMany(s => s.Items)
                .WithOne()
-               .HasForeignKey(i => i.SaleId)
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

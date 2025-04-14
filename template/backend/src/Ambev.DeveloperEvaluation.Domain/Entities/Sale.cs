@@ -5,45 +5,59 @@ using Ambev.DeveloperEvaluation.Domain.Validation;
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 /// <summary>
-/// Represents a sales transaction containing items, customer, branch, and status information.
+/// Represents a sales transaction in the system, including customer and branch information,
+/// date of transaction, total value, and related sale items.
 /// </summary>
 public class Sale : BaseEntity
 {
-    public string SaleNumber { get; set; } = string.Empty;
-    public DateTime Date { get; set; }
-    public string Customer { get; set; } = string.Empty;
-    public string Branch { get; set; } = string.Empty;
-    public bool IsCancelled { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-
-    public ICollection<SaleItem> Items { get; set; } = new List<SaleItem>();
-
     /// <summary>
-    /// Gets the total amount of the sale, calculated from item totals.
+    /// Gets or sets the unique number identifying the sale.
     /// </summary>
-    public decimal TotalAmount => Items.Sum(item => item.Total);
+    public string SaleNumber { get; set; } = string.Empty;
 
     /// <summary>
-    /// Initializes a new instance of the Sale class with current UTC timestamp.
+    /// Gets or sets the date and time when the sale was made.
+    /// </summary>
+    public DateTime SaleDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the name of the customer who made the purchase.
+    /// This value is denormalized following the External Identities pattern.
+    /// </summary>
+    public string Customer { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the name of the branch where the sale was made.
+    /// </summary>
+    public string Branch { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the total amount of the sale, calculated from the sale items.
+    /// </summary>
+    public decimal TotalAmount => Items.Sum(item => item.TotalAmount);
+
+    /// <summary>
+    /// Gets or sets whether the sale has been cancelled.
+    /// </summary>
+    public bool IsCancelled { get; set; }
+
+    /// <summary>
+    /// Gets the collection of items sold in this sale.
+    /// </summary>
+    public List<SaleItem> Items { get; set; } = new();
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Sale"/> class.
     /// </summary>
     public Sale()
     {
-        CreatedAt = DateTime.UtcNow;
+        SaleDate = DateTime.UtcNow;
     }
 
     /// <summary>
-    /// Cancels the sale.
+    /// Performs validation of the Sale entity using the SaleValidator rules.
     /// </summary>
-    public void Cancel()
-    {
-        IsCancelled = true;
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-    /// <summary>
-    /// Validates the current Sale entity using SaleValidator rules.
-    /// </summary>
+    /// <returns>A ValidationResultDetail indicating whether the entity is valid.</returns>
     public ValidationResultDetail Validate()
     {
         var validator = new SaleValidator();
@@ -53,5 +67,17 @@ public class Sale : BaseEntity
             IsValid = result.IsValid,
             Errors = result.Errors.Select(e => (ValidationErrorDetail)e)
         };
+    }
+
+    /// <summary>
+    /// Cancels the sale and all associated sale items.
+    /// </summary>
+    public void Cancel()
+    {
+        IsCancelled = true;
+        foreach (var item in Items)
+        {
+            item.Cancel();
+        }
     }
 }

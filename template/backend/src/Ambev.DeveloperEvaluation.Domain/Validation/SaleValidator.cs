@@ -4,33 +4,30 @@ using FluentValidation;
 namespace Ambev.DeveloperEvaluation.Domain.Validation;
 
 /// <summary>
-/// Validates the Sale entity according to domain rules.
+/// Validações da entidade Sale.
 /// </summary>
 public class SaleValidator : AbstractValidator<Sale>
 {
     public SaleValidator()
     {
-        RuleFor(sale => sale.SaleNumber)
+        RuleFor(s => s.SaleNumber)
             .NotEmpty().WithMessage("Sale number is required.")
-            .MaximumLength(20).WithMessage("Sale number must be less than 20 characters.");
+            .MaximumLength(100).WithMessage("Sale number cannot exceed 100 characters.");
 
-        RuleFor(sale => sale.Date)
-            .NotEmpty().WithMessage("Sale date is required.")
-            .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Sale date cannot be in the future.");
+        RuleFor(s => s.SaleDate)
+            .NotEmpty().WithMessage("Sale date is required.");
 
-        RuleFor(sale => sale.Customer)
+        RuleFor(s => s.Customer)
             .NotEmpty().WithMessage("Customer name is required.")
-            .MaximumLength(100).WithMessage("Customer name must be less than 100 characters.");
+            .MaximumLength(100).WithMessage("Customer name cannot exceed 100 characters.");
 
-        RuleFor(sale => sale.Branch)
-            .NotEmpty().WithMessage("Branch name is required.")
-            .MaximumLength(100).WithMessage("Branch name must be less than 100 characters.");
+        RuleFor(s => s.Branch)
+            .NotEmpty().WithMessage("Branch is required.")
+            .MaximumLength(100).WithMessage("Branch name cannot exceed 100 characters.");
 
-        RuleForEach(sale => sale.Items)
-            .SetValidator(new SaleItemValidator());
+        RuleForEach(s => s.Items).SetValidator(new SaleItemValidator());
 
-        RuleFor(sale => sale.Items)
-            .Must(items => items != null && items.Count > 0)
-            .WithMessage("At least one item is required in a sale.");
+        RuleFor(s => s.Items)
+            .NotEmpty().WithMessage("Sale must have at least one item.");
     }
 }

@@ -31,13 +31,9 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
-        builder.Property(i => i.Discount)
-            .IsRequired()
-            .HasColumnType("decimal(5,2)");
+        builder.Ignore(x => x.Discount);
 
-        builder.Property(i => i.TotalAmount)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
+        builder.Ignore(i => i.TotalAmount);
 
         builder.Property(i => i.IsCancelled)
             .IsRequired();

@@ -4,36 +4,35 @@ using FluentValidation;
 namespace Ambev.DeveloperEvaluation.Domain.Validation;
 
 /// <summary>
-/// Validates the SaleItem entity according to business rules.
+/// Validações da entidade SaleItem com base nas regras de negócio.
 /// </summary>
 public class SaleItemValidator : AbstractValidator<SaleItem>
 {
     public SaleItemValidator()
     {
-        RuleFor(item => item.ProductName)
+        RuleFor(i => i.ProductId)
+            .NotEmpty().WithMessage("ProductId is required.");
+
+        RuleFor(i => i.ProductName)
             .NotEmpty().WithMessage("Product name is required.")
-            .MaximumLength(100).WithMessage("Product name must be less than 100 characters.");
+            .MaximumLength(100).WithMessage("Product name cannot exceed 100 characters.");
 
-        RuleFor(item => item.Quantity)
-            .GreaterThan(0).WithMessage("Quantity must be greater than 0.")
-            .LessThanOrEqualTo(20).WithMessage("Quantity cannot exceed 20 units.");
+        RuleFor(i => i.Quantity)
+            .GreaterThan(0).WithMessage("Quantity must be greater than zero.")
+            .LessThanOrEqualTo(20).WithMessage("Cannot sell more than 20 identical items.");
 
-        RuleFor(item => item.UnitPrice)
-            .GreaterThan(0).WithMessage("Unit price must be greater than 0.");
+        RuleFor(i => i.UnitPrice)
+            .GreaterThan(0).WithMessage("Unit price must be greater than zero.");
 
-        RuleFor(item => item.Discount)
-            .Must((item, discount) =>
-            {
-                if (item.Quantity < 4)
-                    return discount == 0;
-                if (item.Quantity >= 4 && item.Quantity < 10)
-                    return discount == 0.10m;
-                if (item.Quantity >= 10 && item.Quantity <= 20)
-                    return discount == 0.20m;
-                return false;
-            }).WithMessage("Invalid discount based on quantity rules.");
+        RuleFor(i => i)
+            .Must(ValidateDiscountRules).WithMessage("Discount rules violated based on quantity.");
+    }
 
-        RuleFor(item => item.Total)
-            .GreaterThan(0).WithMessage("Total must be greater than 0.");
+    private bool ValidateDiscountRules(SaleItem item)
+    {
+        if (item.Quantity < 4 && item.Discount != 0) return false;
+        if (item.Quantity >= 4 && item.Quantity < 10 && item.Discount != 0.10m) return false;
+        if (item.Quantity >= 10 && item.Quantity <= 20 && item.Discount != 0.20m) return false;
+        return true;
     }
 }
