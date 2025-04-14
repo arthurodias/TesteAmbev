@@ -18,7 +18,7 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
 Primeiro, clone o repositório para sua máquina local:
 
 ```bash
-git clone https://github.com/seu-usuario/developerevaluation.git
+git clone https://git@github.com:arthurodias/TesteAmbev.git
 cd developerevaluation 
 ```
 
