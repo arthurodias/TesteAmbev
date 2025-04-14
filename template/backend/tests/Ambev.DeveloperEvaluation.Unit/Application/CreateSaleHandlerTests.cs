@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using Bogus;
 using FluentAssertions;
+using MediatR;
 using NSubstitute;
 using Xunit;
 
@@ -11,11 +12,13 @@ public class CreateSaleHandlerTests
 {
     private readonly ISaleRepository _saleRepository = Substitute.For<ISaleRepository>();
     private readonly IMapper _mapper = Substitute.For<IMapper>();
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
     private readonly CreateSaleHandler _handler;
+    
 
     public CreateSaleHandlerTests()
     {
-        _handler = new CreateSaleHandler(_saleRepository, _mapper);
+        _handler = new CreateSaleHandler(_saleRepository, _mapper, _mediator);
     }
 
     [Fact]
