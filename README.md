@@ -1,86 +1,71 @@
-# Developer Evaluation Project
+# Projeto DeveloperEvaluation
 
-`READ CAREFULLY`
+Este projeto é uma implementação de um sistema de vendas que segue as regras de negócios específicas de descontos por quantidade de itens e validação de transações. O sistema utiliza conceitos de **Domain-Driven Design (DDD)** e **CQRS** com MediatR e xUnit para testes unitários.
 
-## Instructions
-**The test below will have up to 7 calendar days to be delivered from the date of receipt of this manual.**
+## Requisitos
 
-- The code must be versioned in a public Github repository and a link must be sent for evaluation once completed
-- Upload this template to your repository and start working from it
-- Read the instructions carefully and make sure all requirements are being addressed
-- The repository must provide instructions on how to configure, execute and test the project
-- Documentation and overall organization will also be taken into consideration
+Antes de começar, certifique-se de que você tem as seguintes ferramentas instaladas no seu ambiente de desenvolvimento:
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+- [.NET SDK 8.0 ou superior](https://dotnet.microsoft.com/download)
+- Postgres ou outro banco de dados relacional configurado](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [Visual Studio ou outro editor de sua preferência (como VS Code)](https://visualstudio.microsoft.com/)
+- [xUnit](https://xunit.net/) para testes unitários
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+## Configuração do Projeto
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+### Passo 1: Clonar o Repositório
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+Primeiro, clone o repositório para sua máquina local:
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+```bash
+git clone https://github.com/seu-usuario/developerevaluation.git
+cd developerevaluation 
+```
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+## Configuração do Projeto
 
-### Business Rules
+### Passo 2: Restaurar Dependências
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+Após clonar o repositório, restaure as dependências do projeto com o comando:
 
-These business rules define quantity-based discounting tiers and limitations:
+```bash
+dotnet restore
+```
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+### Passo 3: Configuração do Banco de Dados
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+Este projeto utiliza o **PostgreSQL** como banco de dados. Certifique-se de ter o PostgreSQL instalado e em execução localmente na porta padrão **5432**.
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=DeveloperEvaluation;Username=sa;Password=Pass@word"
+  }
+}
+```
+Aplique as migrações do Entity Framework para criar o esquema no banco de dados:
+```bash
+dotnet ef database update
+```
 
-## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
+### Passo 4: Configuração do Projeto de Testes
 
-See [Overview](/.doc/overview.md)
+O projeto de testes está localizado na pasta Ambev.DeveloperEvaluation.Unit. Para rodar os testes unitários, basta navegar até essa pasta e executar o comando:
 
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
+```bash
+dotnet test
+```
 
-See [Tech Stack](/.doc/tech-stack.md)
+Executando o Projeto
 
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
+Para rodar a aplicação, utilize o seguinte comando na pasta do projeto principal:
 
-See [Frameworks](/.doc/frameworks.md)
+```bash
+dotnet run
+```
 
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
+## Licença
 
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
+Este projeto foi desenvolvido por **Arthur Rodrigues**.
 
-See [Project Structure](/.doc/project-structure.md)
+
+
